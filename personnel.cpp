@@ -7,14 +7,18 @@ cin=0;
 nom=" ";
 prenom=" ";
 email="";
+salaire=0.0;
+prime=0.0;
 }
-Personnel::Personnel(long cin ,QString nom,QString prenom,QString email)
+Personnel::Personnel(int cin ,QString nom,QString prenom,QString email,float salaire,float prime)
 {
 
   this->cin=cin;
     this->nom=nom;
     this->prenom=prenom;
     this->email=email;
+    this->salaire=salaire;
+    this->prime=prime;
 
 }
 int Personnel::get_cin()
@@ -33,6 +37,17 @@ QString Personnel::getemail()
 {
     return email;
 }
+int Personnel::getsalaire()
+{
+    return salaire;
+
+}
+float Personnel::getprime()
+{
+
+    return prime;
+}
+
 void Personnel::setid(int cin)
 {
     this->cin=cin;
@@ -50,38 +65,48 @@ void Personnel::setemail(QString email)
 {
     this->email=email;
 }
+void Personnel::setsalaire(float salaire)
+{
+
+    this->salaire=salaire;
+}
+void Personnel::setprime(float prime)
+{
+    this->prime=prime;
+}
 bool Personnel::ajouter()
 {
 
- QSqlQuery query;
- QString cin_string=QString::number(cin);
-    query.prepare("INSERT INTO PERSONNEL (cin, nom, prenom,email) "
-                  "VALUES (:cin, :nom, :prenom,:email)");
-    query.bindValue(":cin",cin );
-    query.bindValue(":nom", nom);
-    query.bindValue(":prenom", prenom);
-        query.bindValue(":email", email);
+    QSqlQuery query;
+    query.prepare("INSERT INTO PERSONNEL (cin, nom, prenom,salaire,prime,email) "
+                  "VALUES (:cin,:nom, :prenom,:salaire,:prime,:email)");
+   query.bindValue(":cin",cin);
+   query.bindValue(":nom", nom);
+   query.bindValue(":prenom", prenom);
+   query.bindValue(":salaire", salaire);
+   query.bindValue(":prime", prime);
+     query.bindValue(":email", email);
    return  query.exec();
 
 }
 
 bool Personnel::supprimer(int cin)
 {
-    QSqlQuery query;
-    QString cin_string=QString::number(cin);
+     QSqlQuery query;
+     QString cin_string=QString::number(cin);
        query.prepare("Delete from Personnel where cin=:cin");
        query.bindValue(":cin",cin);
-      return  query.exec();
+      return query.exec();
 
 }
 
-/*QSqlQueryModel* Personnel::afficher()
+float Personnel::calcule_prime(float b, float a, QString salaire, int n,int somme)
 {
-   QSqlQueryModel* model=new QSqlQueryModel();
-   model->setQuery("SELECT* FROM personnel");
-        model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
-        model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
-        model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
-        model->setHeaderData(3, Qt::Horizontal, QObject::tr("EMAIL"));
-return model;
-}*/
+float sal;
+sal=salaire.toFloat();
+    float s,s1;
+    s=somme/n;
+    return( s1=(b*sal)+(s*a));
+
+
+}

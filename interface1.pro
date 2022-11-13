@@ -1,5 +1,7 @@
 QT       += core gui
 QT       += core gui sql
+QT       += core gui printsupport
+QT       += core gui charts
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -16,18 +18,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Mainwindow.cpp \
     connection.cpp \
+    dialog.cpp \
+    login.cpp \
     main.cpp \
-    mainwindow.cpp \
     personnel.cpp
 
 HEADERS += \
+    Mainwindow.h \
     connection.h \
-    mainwindow.h \
+    dialog.h \
+    login.h \
     personnel.h
 
 FORMS += \
-    mainwindow.ui
+    Mainwindow.ui \
+    dialog.ui \
+    login.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

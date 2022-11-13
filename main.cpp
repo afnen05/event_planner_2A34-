@@ -1,12 +1,14 @@
-#include "mainwindow.h"
+#include "Mainwindow.h"
 #include <QApplication>
 #include <QMessageBox>
 #include "connection.h"
+#include"dialog.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
     Connection c;
+    Dialog d;
     bool test=c.createconnect();
     if(test)
     {w.show();

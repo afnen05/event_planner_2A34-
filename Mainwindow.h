@@ -1,8 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include"personnel.h"
+#include <QApplication>
+#include <QtCharts/QLegend>
+#include <QtCharts>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+QT_CHARTS_USE_NAMESPACE
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,7 +31,6 @@ private slots:
     void on_pb_modifier_clicked();
 
 
-    void on_pushButton_9_clicked();
 
     void on_pb_afficher_clicked();
 
@@ -35,6 +41,30 @@ private slots:
 
 
     void on_tab_perso_clicked(const QModelIndex &index);
+
+    void on_pb_conf_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_7_clicked();
+
+
+
+    void on_pb_supp1_clicked();
+
+    void on_pushButton_5_clicked();
+
+    void on_pushButton_9_clicked();
+
+    void on_pushButton_8_clicked();
+
+    void on_pushButton_10_clicked();
+
+    void on_pushButton_11_clicked();
+
+    void on_pushButton_12_clicked();
 
 private:
     Ui::MainWindow *ui;
