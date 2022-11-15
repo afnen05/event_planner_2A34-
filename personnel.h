@@ -10,36 +10,40 @@ class Personnel
 {
 public:
     Personnel();
-    Personnel(int,QString,QString,QString,float,float);
+    Personnel(int,QString,QString,QString,QString,QString);
     int get_cin();
     QString getnom();
     QString getprenom();
     QString getemail();
+    QString getmdp();
+    QString gettype();
     int getsalaire();
-    float getprime();
     void setid(int);
     void setnom(QString);
     void setprenom(QString);
     void setemail(QString);
-    void setsalaire(float);
     void setprime(float);
+    void setmdp(QString);
+    void settype(QString);
     bool ajouter();
     //QSqlQueryModel *afficher();
     bool supprimer(int);
     bool modifier(int);
-
+QSqlQuery recherche(int);
+QSqlQuery tri();
+QSqlQuery affiher();
+QSqlQuery tab_afficher(QString);
+bool ajout_conge(int);
     float calcule_prime(float,float,QString,int,int);
 
 private:
-int cin;
+  int cin;
   QString nom;
   QString prenom;
   QString email;
-  int salaire;
- float prime;
-  QDate date_debut;
-  QDate date_retour;
-  QString confirmation="en attente";
+  QString type;
+  QString mdp;
+
 
 };
 

@@ -1,8 +1,8 @@
 #ifndef DIALOG_H
 #define DIALOG_H
-#include<Mainwindow.h>
+#include"Mainwindow.h"
 #include <QDialog>
-
+#include"personnel.h"
 namespace Ui {
 class Dialog;
 }
@@ -24,6 +24,7 @@ private:
     Ui::Dialog *ui;
     Ui::MainWindow *uii;
     MainWindow *m;
+    Personnel p;
 };
 
 #endif // DIALOG_H

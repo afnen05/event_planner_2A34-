@@ -1,11 +1,13 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 #include<Mainwindow.h>
+#include<QIntValidator>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+  ui->cin_mdp->setValidator(new QIntValidator(0,99999999, this));
 }
 
 Dialog::~Dialog()
@@ -22,18 +24,23 @@ void Dialog::on_buttonBox_accepted()
 void Dialog::on_pushButton_clicked()
 {
     QSqlQuery qry;
-    int cin=ui->cin_mdp->text().toInt();
+  QString cin=ui->cin_mdp->text();
     QString mdp=ui->mdp->text();
     QString type=ui->comboBox->currentText();
-    qry.prepare("select * from personnel where cin=:cin AND mdp=:mdp AND type=:type");
-    qry.bindValue(":cin",cin);
-    qry.bindValue(":mdp",mdp);
-    qry.bindValue(":type",type);
-    if(qry.exec())
+    if( qry.exec("select *from personnel where cin='"+cin+"' AND mdp='"+mdp+"' AND type='"+type+"'")
+)
+
+   {
+        int count=0;
+        while(qry.next())
+           { count++;}
+    if(count==1)
     {
-m=new MainWindow();
+m=new MainWindow(this);
     m->show();
+
 }
+    }
     else
     {
         QMessageBox::warning(this,"error","can't log in check informations");

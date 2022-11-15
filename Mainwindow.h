@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include"personnel.h"
+#include"conge.h"
+#include"sp.h"
 #include <QApplication>
 #include <QtCharts/QLegend>
 #include <QtCharts>
@@ -66,8 +68,21 @@ private slots:
 
     void on_pushButton_12_clicked();
 
+
+    void on_ajout_salaire_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_6_clicked();
+
+    void on_pushButton_13_clicked();
+
+    void on_pushButton_14_clicked();
+
 private:
     Ui::MainWindow *ui;
     Personnel p;
+    conge g;
+    sp s;
 };
 #endif // MAINWINDOW_H

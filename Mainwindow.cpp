@@ -1,6 +1,7 @@
 #include "Mainwindow.h"
 #include "ui_Mainwindow.h"
 #include"personnel.h"
+#include"conge.h"
 #include<QString>
 #include<QMessageBox>
 #include <QSqlQueryModel>
@@ -13,6 +14,7 @@
 #include<QDate>
 #include<QRegularExpression>
 #include<QRegExpValidator>
+#include"sp.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,7 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
      ui->cin_recherche->setValidator(new QIntValidator(0,99999999, this));
      ui->cin_sal->setValidator(new QIntValidator(0,99999999, this));
 ui->cin_cong->setValidator(new QIntValidator(0,99999999, this));
-
+ui->cin_salaire->setValidator(new QIntValidator(0,99999999, this));
+ui->lineEdit_2->setValidator(new QIntValidator(0,9999, this));
 }
 
 MainWindow::~MainWindow()
@@ -50,32 +53,19 @@ void MainWindow::on_pb_ajouter_clicked()
    int cin=ui->le_cin->text().toInt();
    QString nom=ui->le_nom->text();
    QString prenom=ui->le_prenom->text();
-   QString salaire=ui->salaire->text();
+
    QString type=ui->comboBox_3->currentText();
-
+   QString mdp=ui->le_mdp->text();
    QString email=ui->le_email->text();
-   q.prepare("INSERT INTO personnel(cin,nom,prenom,email,type)"
-             "VALUES(:cin,:nom,:prenom,:email,:type)");
-       q.bindValue(":cin",cin);
-      q.bindValue(":nom",nom);
-      q.bindValue(":prenom",prenom);
-q.bindValue(":type",type);
+Personnel p(cin,nom,prenom,email,type,mdp);
+             bool test=p.ajouter();
 
-q.bindValue(":email",email);
-if(q.exec())
+if(test)
     QMessageBox::information(this,"edit","hmdlh");
 else
     QMessageBox::warning(this,"error","leeee");
 
-qry.prepare("INSERT INTO salairee (cin,salaire)"
-            "VALUES (:cin,:salaire) ");
-qry.bindValue(":cin",cin);
-qry.bindValue(":salaire",salaire);
 
-if(qry.exec())
-    QMessageBox::information(this,"edit","insertion de salaire effectuee");
-else
-    QMessageBox::warning(this,"error","slaire lee");
 }
 //void MainWindow::affichage()
 
@@ -107,22 +97,20 @@ void MainWindow::on_pb_supp_clicked()
 void MainWindow::on_pb_modifier_clicked()
 {
     QSqlQuery qry;
-QString cin=ui->cin_recherche->text();
+int cin=ui->cin_recherche->text().toInt();
     QString nom=ui->nv_nom->text();
     QString prenom=ui->nv_prenom->text();
     QString email=ui->nv_email->text();
-     qry.prepare("update personnel set  cin='"+cin+"',nom='"+nom+"',prenom='"+prenom+"',email='"+email+"'where cin='"+cin+"' " );
-
-      if(qry.exec())
-       {
-           QMessageBox::information(this,"edit","service modified successfully");
-       }
-       else
-       {
-           QMessageBox::warning(this,"error","error");
-       }
-
-
+    QString type=ui->nv_type->text();
+    QString mdp=ui->nv_mdp->text();
+     Personnel p(cin,nom,prenom,email,type,mdp);
+   bool test=p.modifier(cin);
+   if(test)
+   {
+       QMessageBox::information(this,"edit","modification effectuee");
+   }
+   else
+       QMessageBox::warning(this,"error","error");
 
 }
 
@@ -131,12 +119,12 @@ QString cin=ui->cin_recherche->text();
 void MainWindow::on_pb_afficher_clicked()
 {
     QSqlQuery req;
-        QStandardItemModel *model =new QStandardItemModel(4,4);
+        QStandardItemModel *model =new QStandardItemModel(6,6);
        int row=0;
-       req.exec("select cin,nom,prenom,email from personnel");
+       req.exec("select *from personnel");
        while(req.next())
        {
-           for(int i=0;i<4;i++)
+           for(int i=0;i<6;i++)
            {
                QStandardItem *item=new QStandardItem(req.value(i).toString());   //i le nombre de colone;
                model->setItem(row,i,item);
@@ -149,7 +137,8 @@ void MainWindow::on_pb_afficher_clicked()
        model->setHeaderData(1,Qt::Horizontal,"nom");//ecrire header of table
        model->setHeaderData(2,Qt::Horizontal,"prenom");
        model->setHeaderData(3,Qt::Horizontal,"email");
-
+       model->setHeaderData(4,Qt::Horizontal,"type");
+       model->setHeaderData(5,Qt::Horizontal,"mdp");
 
        ui->tab_perso->setModel(model);
 }
@@ -157,9 +146,7 @@ void MainWindow::on_pb_afficher_clicked()
 void MainWindow::on_pb_recherche_clicked()
 {
     int cin=ui->cin_recherche->text().toInt();
-       QSqlQuery qry;
-       qry.prepare("select * from personnel where cin=:cin");
-        qry.bindValue(":cin",cin );
+       QSqlQuery qry=p.recherche(cin);
        if(qry.exec())
        {QSqlQueryModel * model=new QSqlQueryModel();
 
@@ -176,8 +163,8 @@ void MainWindow::on_pb_recherche_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QSqlQuery qry;
-      qry.prepare("select * from personnel ORDER BY nom");
+    QSqlQuery qry=p.tri();
+
       if(qry.exec())
 
 
@@ -199,9 +186,8 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_tab_perso_clicked(const QModelIndex &index)
 {
     QString val=ui->tab_perso->model()->data(index).toString();
-    QSqlQuery qry;
-    qry.prepare("select * from personnel where cin=:val");
-    qry.bindValue(":val",val);
+    QSqlQuery qry=p.tab_afficher(val);
+
     if (qry.exec())
     {
         while(qry.next())
@@ -211,7 +197,9 @@ void MainWindow::on_tab_perso_clicked(const QModelIndex &index)
             ui->nv_nom->setText(qry.value(1).toString());
             ui->nv_prenom->setText(qry.value(2).toString());
             ui->nv_email->setText(qry.value(3).toString());
-            QString s=(qry.value(0).toString()+"\n"+qry.value(1).toString()+"\n"+qry.value(2).toString()+"\n"+qry.value(3).toString());
+            ui->nv_type->setText(qry.value(4).toString());
+            ui->nv_mdp->setText(qry.value(5).toString());
+            QString s=(qry.value(0).toString()+"\n"+qry.value(1).toString()+"\n"+qry.value(2).toString()+"\n"+qry.value(3).toString()+"\n"+qry.value(4).toString()+"\n"+qry.value(5).toString());
             ui->aff_pdf->setText(s);
         }
     }
@@ -252,91 +240,32 @@ if(dialog.exec()==QDialog::Rejected)
 }
 else
     ui->aff_pdf->print(&printer);
+
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
     ui->tabWidget->setCurrentIndex(5);
 }
-int taxx(int c)
-{
-    return c*20;
 
-
-}
-/*void form_dialog::setCurrentDate()
-{
-    QDA date = QDate::currentDate();
-    QString dateString = date.toString();
-    ui->DateEdit->setDate(dateString);
-}*/
-
-/*void MainWindow::on_pushButton_7_clicked()
-{
-    QSqlQuery qry,qry1;
-   int cin=ui->cin_cong->text().toInt();
-
-
-   qry.prepare("select salaire=:salaire from personnel where cin=:cin");
-   qry.bindValue(":cin",cin);
-   qry.bindValue(":salaire",p.getsalaire()-tax);
-   if(qry.exec())
-   {
-
-       QMessageBox::information(this,"edit","success");
-
-   }
-   else
-   {
-       QMessageBox::warning(this,"edit","failed");
-   }
-}*/
-
-/*void MainWindow::on_date_debut_userDateChanged(const QDate &date)
-{
-    date == QDate::currentDate();
-
-}*/
-
-/*void MainWindow::on_pushButton_7_clicked()
-{
-  QDate d1= ui->date_debut->date();
-  QDate d2= ui->date_retour->date();
-  QSqlQuery query;
-QString cin_string=QString::number(p.get_cin());
-  query.prepare("INSERT INTO PERSONNEL (cin,) "
-                "VALUES (:cin, :nom, :prenom,:email,:salaire,:prime)");
-  query.bindValue(":cin",cin );
-  query.bindValue(":nom", nom);
-  query.bindValue(":prenom", prenom);
-      query.bindValue(":email", email);
-       query.bindValue(":salaire", salaire);
-           query.bindValue(":prime", prime);
- return  query.exec();
-
-}*/
 void MainWindow::on_pushButton_7_clicked()
 {
 
     int cin=ui->cin_cong->text().toInt();
     QString d1=ui->date_debut->text();
     QString d2=ui->date_retour->text();
-    QString s="non confirmer";
-    QSqlQuery qry;
-    qry.prepare("INSERT INTO CONGE (cin,date_debut,date_retour,etat)"
-                "VALUES (:cin,:date_debut,:date_retour,:etat)");
-    qry.bindValue(":cin",cin);
-    qry.bindValue(":date_debut",d1);
-    qry.bindValue(":date_retour",d2);
-    qry.bindValue(":etat",s);
-    if(qry.exec())
+   QString etat="";
+    conge g(cin,d1,d2,etat);
+    bool test=g.ajouter();
+    if(test)
     {
 
      QMessageBox::information(this,"edit","validee");
 
     }
     else
-    {QMessageBox::warning(this,"edit","failed");
+    {
+            QMessageBox::warning(this,"edit","failed");
 
 
 }
@@ -347,11 +276,10 @@ void MainWindow::on_pushButton_7_clicked()
 
 void MainWindow::on_pb_supp1_clicked()
 {
-    QSqlQuery query;
+
     int cin=ui->cin_cong->text().toInt();
-       query.prepare("Delete from conge where cin=:cin");
-       query.bindValue(":cin",cin);
-      if (query.exec())
+      bool test=g.supprimer(cin);
+      if (test)
       {
 
        QMessageBox::information(this,"edit","validee");
@@ -368,13 +296,10 @@ void MainWindow::on_pb_supp1_clicked()
 
 void MainWindow::on_pushButton_5_clicked()
 {
-    QSqlQuery query;
+
     int cin=ui->cin_cong->text().toInt();
-    QString etat="confirmee";
-       query.prepare("update conge set  etat=:etat where cin=:cin" );
-       query.bindValue(":cin",cin);
-       query.bindValue(":etat",etat);
-      if (query.exec())
+   bool test=g.modifier(cin);
+      if (test)
       {
 
        QMessageBox::information(this,"edit","validee");
@@ -420,6 +345,7 @@ void MainWindow::on_pushButton_8_clicked()
 {
     QSqlQuery req;
     int cin=ui->cin_sal->text().toInt();
+
         QStandardItemModel *model =new QStandardItemModel(3,3);
        int row=0;
        req.bindValue(":cin",cin);
@@ -444,13 +370,10 @@ void MainWindow::on_pushButton_8_clicked()
 
 void MainWindow::on_pushButton_10_clicked()
 {
-    QSqlQuery query;
+
     int cin=ui->cin_cong->text().toInt();
-    QString etat="refusée";
-       query.prepare("update conge set  etat=:etat where cin=:cin" );
-       query.bindValue(":cin",cin);
-       query.bindValue(":etat",etat);
-      if (query.exec())
+   bool test=g.refuser(cin);
+      if (test)
       {
 
        QMessageBox::information(this,"edit","validee");
@@ -466,13 +389,14 @@ void MainWindow::on_pushButton_10_clicked()
 
 void MainWindow::on_pushButton_11_clicked()
 {
-    int n=0;
-   QString sal;
+
     float a=ui->comboBox->currentText().toFloat();
     float b=ui->comboBox_2->currentText().toFloat();
     int cin=ui->cin_sal->text().toInt();
- int somme=0;
   QString prime;
+  int n=0;
+ QString sal;
+  int somme=0;
    QSqlQuery q,qry,query,qu;
    q.prepare("select * from evenment where cin=:cin ");
    q.bindValue(":cin",cin);
@@ -489,8 +413,7 @@ void MainWindow::on_pushButton_11_clicked()
        QMessageBox::warning(this,"edit","failed");
 
    }
-   qry.prepare("select DISTINCT (salaire)  from salairee where cin=:cin");
-    qry.bindValue(":cin",cin);
+  qry=s.salaire_distinct(cin);
 
    if(qry.exec())
    {
@@ -502,8 +425,7 @@ void MainWindow::on_pushButton_11_clicked()
 else
        QMessageBox::warning(this,"error","salaire lee");
 
-   query.prepare("SELECT SUM (prix) FROM evenment WHERE cin=:cin");
-    query.bindValue(":cin",cin);
+   query=s.calcule_prix_total(cin);
    if(query.exec())
    {
        while(query.next())
@@ -514,12 +436,8 @@ else
        QMessageBox::warning(this,"error","somme lee");
 
 
-   prime=QString::number((p.calcule_prime(a,b,sal,n,somme)));
-
-   qu.prepare("update salairee set prime=:prime where cin=:cin");
-    qu.bindValue(":cin",cin);
-    qu.bindValue(":prime",prime);
-   if(qu.exec())
+  bool test=s.update_prime(cin,a,b,sal,n,somme);
+   if(test)
        QMessageBox::information(this,"edit","insertion mchet");
    else
        QMessageBox::warning(this,"error","errorrr");
@@ -579,9 +497,66 @@ void MainWindow::on_pushButton_12_clicked()
                 chart->setTitle("statistique");
                 chart->setAnimationOptions(QChart::AllAnimations);
                 chart->legend()->hide();
-                QChartView *chartView = new QChartView(chart,ui->label_33);
+                QChartView *chartView = new QChartView(chart,ui->stat);
                 chartView->setRenderHint(QPainter::Antialiasing);
                 QGridLayout *layout = new QGridLayout();
                 layout->addWidget(chartView);
-                ui->label_33->setLayout(layout);
+                ui->stat->setLayout(layout);
+
+}
+
+
+
+void MainWindow::on_ajout_salaire_clicked()
+{
+    int cin=ui->cin_salaire->text().toInt();
+    QString salaire=ui->lineEdit_2->text();
+    QString prime="";
+    sp s(cin,salaire,prime);
+    bool test=s.ajout();
+    if (test)
+    {
+
+     QMessageBox::information(this,"edit","validee");
+
+    }
+
+    else
+    {
+        QMessageBox::warning(this,"edit","failed");
+
+}
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    ui->le_cin->clear();
+    ui->le_nom->clear();
+    ui->le_prenom->clear();
+    ui->le_email->clear();
+    ui->le_mdp->clear();
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    ui->cin_salaire->clear();
+    ui->lineEdit_2->clear();
+}
+
+void MainWindow::on_pushButton_13_clicked()
+{
+    ui->cin_recherche->clear();
+    ui->nv_nom->clear();
+    ui->nv_prenom->clear();
+    ui->nv_type->clear();
+    ui->nv_mdp->clear();
+    ui->nv_email->clear();
+}
+
+void MainWindow::on_pushButton_14_clicked()
+{
+    ui->cin_cong->clear();
+    ui->date_debut->clear();
+    ui->date_retour->clear();
+
 }

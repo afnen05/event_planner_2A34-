@@ -19,18 +19,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Mainwindow.cpp \
+    conge.cpp \
     connection.cpp \
     dialog.cpp \
-    login.cpp \
     main.cpp \
-    personnel.cpp
+    personnel.cpp \
+    sp.cpp
 
 HEADERS += \
     Mainwindow.h \
+    conge.h \
     connection.h \
     dialog.h \
-    login.h \
-    personnel.h
+    personnel.h \
+    sp.h
 
 FORMS += \
     Mainwindow.ui \
