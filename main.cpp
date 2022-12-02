@@ -1,15 +1,19 @@
-#include "mainwindow.h"
+#include "Mainwindow.h"
 #include <QApplication>
 #include <QMessageBox>
 #include "connection.h"
+#include"dialog.h"
+#include "menu.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
     Connection c;
+    Dialog d;
+    MENU m;
     bool test=c.createconnect();
     if(test)
-    {w.show();
+    {m.show();
         QMessageBox::information(nullptr, QObject::tr("database is open"),
                     QObject::tr("connection successful.\n"
                                 "Click Cancel to exit."), QMessageBox::Cancel);
@@ -21,7 +25,7 @@ int main(int argc, char *argv[])
                                 "Click Cancel to exit."), QMessageBox::Cancel);
 
 
-w.affichage();
+//w.affichage();
     return a.exec();
 
 }

@@ -1,20 +1,27 @@
 #include "personnel.h"
 #include<QSqlDatabase>
 #include<QObject>
+#include<QSqlQuery>
+#include<QDebug>
+#include<QSqlQueryModel>
 Personnel::Personnel()
 {
 cin=0;
 nom=" ";
 prenom=" ";
 email="";
+type="";
+mdp="";
 }
-Personnel::Personnel(long cin ,QString nom,QString prenom,QString email)
+Personnel::Personnel(int cin ,QString nom,QString prenom,QString email,QString type,QString mdp)
 {
 
   this->cin=cin;
     this->nom=nom;
     this->prenom=prenom;
     this->email=email;
+    this->type=type;
+    this->mdp=mdp;
 
 }
 int Personnel::get_cin()
@@ -33,6 +40,14 @@ QString Personnel::getemail()
 {
     return email;
 }
+QString Personnel::gettype()
+{
+    return type;
+}
+QString Personnel::getmdp()
+{
+    return mdp;
+}
 void Personnel::setid(int cin)
 {
     this->cin=cin;
@@ -50,38 +65,68 @@ void Personnel::setemail(QString email)
 {
     this->email=email;
 }
+void Personnel::settype(QString type)
+{
+    this->type=type;
+}
 bool Personnel::ajouter()
 {
-
- QSqlQuery query;
- QString cin_string=QString::number(cin);
-    query.prepare("INSERT INTO PERSONNEL (cin, nom, prenom,email) "
-                  "VALUES (:cin, :nom, :prenom,:email)");
-    query.bindValue(":cin",cin );
-    query.bindValue(":nom", nom);
-    query.bindValue(":prenom", prenom);
-        query.bindValue(":email", email);
+QString cin_string=QString::number(cin);
+    QSqlQuery query;
+    query.prepare("INSERT INTO PERSONNEL (cin, nom, prenom,email,type,mdp) "
+                  "VALUES (:cin,:nom, :prenom,:email,:type,:mdp)");
+   query.bindValue(":cin",cin);
+   query.bindValue(":nom", nom);
+   query.bindValue(":prenom", prenom);
+   query.bindValue(":email",email);
+   query.bindValue(":type",type);
+     query.bindValue(":mdp",mdp);
    return  query.exec();
 
 }
 
 bool Personnel::supprimer(int cin)
 {
-    QSqlQuery query;
-    QString cin_string=QString::number(cin);
+     QSqlQuery query;
+     QString cin_string=QString::number(cin);
        query.prepare("Delete from Personnel where cin=:cin");
        query.bindValue(":cin",cin);
-      return  query.exec();
+      return query.exec();
 
 }
-
-QSqlQueryModel* Personnel::afficher()
+bool Personnel::modifier(int cin )
 {
-   QSqlQueryModel* model=new QSqlQueryModel();
-   model->setQuery("SELECT* FROM personnel");
-        model->setHeaderData(0, Qt::Horizontal, QObject::tr("CIN"));
-        model->setHeaderData(1, Qt::Horizontal, QObject::tr("NOM"));
-        model->setHeaderData(2, Qt::Horizontal, QObject::tr("PRENOM"));
-        model->setHeaderData(3, Qt::Horizontal, QObject::tr("EMAIL"));
-return model;
+ QSqlQuery q;
+ q.prepare("update personnel set  cin=:cin,nom='"+nom+"',prenom='"+prenom+"',email='"+email+"',type='"+type+"',mdp='"+mdp+"'where cin=:cin " );
+q.bindValue(":cin",cin);
+ return q.exec();
+}
+
+float Personnel::calcule_prime(float b, float a, QString salaire, int n,int somme)
+{
+float sal;
+sal=salaire.toFloat();
+    float s,s1;
+    s=somme/n;
+    return( s1=(b*sal)+(s*a));
+}
+QSqlQuery Personnel::recherche(int cin)
+{
+QSqlQuery qry;
+ qry.prepare("select * from personnel where cin=:cin");
+ qry.bindValue(":cin",cin);
+ return qry;
+}
+QSqlQuery Personnel::tri()
+{
+QSqlQuery qry;
+ qry.prepare("select * from personnel ORDER BY nom");
+ return qry;
+}
+QSqlQuery Personnel::tab_afficher(QString val)
+{
+QSqlQuery qry;
+ qry.prepare("select * from personnel where cin=:val");
+ qry.bindValue(":val",val);
+ return qry;
 }
