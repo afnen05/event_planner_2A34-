@@ -11,7 +11,7 @@ class facture
 {
 public:
     facture();
-    facture(QString,QString,QString);
+    facture(QString,QString,QString,int,int);
     QString getNfacture();
     QString getid_event();
     QString getid_offre();
@@ -23,18 +23,24 @@ public:
     void setdate(QString);
 
     bool ajouter ();
+    bool ajouter_remboursement (int,int,int);
+    bool supprimer_remboursement(int);
+    QSqlQueryModel * afficher_remboursement();
     QSqlQueryModel * afficher();
+    QSqlQueryModel * getEvents();
     bool supprimer(QString);
-    bool modifier(QString,QString,QString);
+    bool modifier();
 
-    QSqlQueryModel * trier(int choix);
-    QSqlQueryModel * rechercher(int choix);
+    QSqlQueryModel * trier(QString);
+    QSqlQueryModel * rechercher(QString );
 
 private:
     QString n_facture;
 
     QString date;
     QString offre;
+    int TVA;
+    int prix;
 
 };
 

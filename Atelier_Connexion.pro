@@ -1,13 +1,16 @@
-#-------------------------------------------------
+ #-------------------------------------------------
 #
 # Project created by QtCreator 2018-10-26T21:45:23
 #
 #-------------------------------------------------
 
 QT       += core gui sql \
-    quick
+    quick charts
 QT+= sql
+QT+= serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+QT += printsupport
 
 TARGET = Atelier_Connexion
 TEMPLATE = app
@@ -26,12 +29,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 CONFIG += console
 SOURCES += \
+    arduino.cpp \
     facture.cpp \
         main.cpp \
         mainwindow.cpp \
     connection.cpp
 
 HEADERS += \
+    arduino.h \
     facture.h \
         mainwindow.h \
     connection.h
