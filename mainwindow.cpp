@@ -1,25 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "event.h"
-#include <QDateEdit>
-#include <QMessageBox>
-#include <QIntValidator>
-#include <QValidator>
+#include "facture.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    QRegularExpression rnumber("\\b([0-9][0-9][-][0-9][0-9][-][0-9][0-9][0-9][0-9])\\b",QRegularExpression::CaseInsensitiveOption);
+    ui->nf->setValidator(new QIntValidator(1, 1000000000, this));
+    QRegularExpression rnumber("\\b([0-3][0-9][-][0-1][0-9][-][0-9][0-9][0-9][0-9])\\b",QRegularExpression::CaseInsensitiveOption);
             QRegularExpressionValidator *valnumber = new QRegularExpressionValidator(rnumber,this);
-             ui->date_ev->setValidator(valnumber);
-
-             QRegularExpression r2number("\\b([a-zA-Z])([a-zA-Z0-9])*\\b",QRegularExpression::CaseInsensitiveOption);
-                   QRegularExpressionValidator *val1 = new QRegularExpressionValidator(r2number,this);
-                    ui->nom_ev->setValidator(val1);
-ui->tab_ev->setModel(E.afficher());
+             ui->da->setValidator(valnumber);
 }
 
 MainWindow::~MainWindow()
@@ -27,70 +18,67 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
-
-
-void MainWindow::on_push1_clicked()
+void MainWindow::on_pb_ajouter_clicked()
 {
+    QString n_facture=ui->nf->text();
+     QString offre=ui->off->text();
+     QString date=ui->da->text();
+    facture fac(n_facture,date,offre);
+     bool test=fac.ajouter();
+      MainWindow w;
+      if(test)
+      {ui->tab_fac ->setModel(fac.afficher());
+          QMessageBox::information(nullptr, QObject::tr("Ajouter"),
+                      QObject::tr("ajout avec succes.\n"
+                                  "Click Cancel to exit."), QMessageBox::Cancel);
+      }
+       else
+           QMessageBox::critical(nullptr, QObject::tr("Ajouter"),
+                       QObject::tr("echec d ajout.\n"
+                                   "Click Cancel to exit."), QMessageBox::Cancel);
+}
 
-     QString CIN_CL=ui->cin_c->text();
-     QString NOM=ui->nom_ev->text();
-     QString DATE_EV=ui->date_ev->text();
-     Event E(CIN_CL,DATE_EV,NOM);
-     bool test= E.ajouter();
-     if (test){
-         QMessageBox::information(nullptr, QObject::tr(" OK"),
-                     QObject::tr("Ajout successful.\n"
-                                 "Click Cancel to exit."), QMessageBox::Cancel);
-         ui->tab_ev->setModel(E.afficher());
 
 
-     }
+
+void MainWindow::on_pb_supprimer_clicked()
+{
+    facture f1;
+    f1.setNfacture(ui->supp->text());
+    bool test=f1.supprimer(f1.getNfacture());
+
+    QMessageBox msgBox;
+    if(test)
+        msgBox.setText("Suppression avec succes");
      else
-         QMessageBox::critical(nullptr, QObject::tr("NOT OK"),
-                     QObject::tr("Ajout failed.\n"
-                                 "Click Cancel to exit."), QMessageBox::Cancel);
+        msgBox.setText("Echec de suppression");
+        msgBox.exec();
 }
 
 
+void MainWindow::on_modifier_clicked()
+{     facture f2;
+      QSqlQuery query;
+    QString n_facture=ui->nf2->text();
 
-void MainWindow::on_supprimer_clicked()
-{ Event E1;
-    E1.setnom(ui->sup->text());
-    bool test=E1.supprimer(E1.getnom());
-    if (test){
-        QMessageBox::information(nullptr, QObject::tr(" OK"),
-                    QObject::tr("Delete successful.\n"
-                                "Click Cancel to exit."), QMessageBox::Cancel);
-        ui->tab_ev->setModel(E.afficher());
+    QString offre=ui->off2->text();
+    QString date=ui->da2->text();
+      facture fac2(n_facture,offre,date);
+        bool test;
+        test= fac2.modifier(n_facture,offre,date);
+          query.prepare("UPDATE FACTURE SET DATEE='"+date+"',OFFRE='"+offre+"''WHERE ID_FACTURE=:ID_FACTURE");
+                  query.bindValue(":ID_FACTURE",n_facture);
+       if (test)
 
-    }
-    else
-        QMessageBox::critical(nullptr, QObject::tr("NOT OK"),
-                    QObject::tr("Delete failed.\n"
-                                "Click Cancel to exit."), QMessageBox::Cancel);
-}
+          {
+           ui->tab_fac->setModel(fac2.afficher());
+           QMessageBox::information(nullptr, QObject::tr("MODIFIER"),
+                                         QObject::tr("MODIFICATION avec succes .\n"
+                                                     "Click Cancel to exit."), QMessageBox::Cancel);
 
-
-
-
-
-void MainWindow::on_Modifier_clicked()
-{
-    Event E3;
-        QString NOM=ui->L1->text();
-        QString DATE_Ev=ui->L2->text();
-        QString CIN_CL=ui->L3->text();
-         bool test=E3.Modifier(CIN_CL,DATE_Ev,NOM);
-         if (test){
-             QMessageBox::information(nullptr, QObject::tr(" OK"),
-                         QObject::tr("modifier successful.\n"
-                                     "Click Cancel to exit."), QMessageBox::Cancel);
-
-         }
-         else
-         {QMessageBox::critical(nullptr, QObject::tr("NOT OK"),
-                         QObject::tr("modifier failed.\n"
-                                     "Click Cancel to exit."), QMessageBox::Cancel);}
+           }
+                         else
+                             QMessageBox::critical(nullptr, QObject::tr("MODIFIER"),
+                                         QObject::tr("UPDATE failed.\n"
+                                                     "Click Cancel to exit."), QMessageBox::Cancel);
 }
