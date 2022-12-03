@@ -3,6 +3,7 @@ QT       += core gui sql
 QT       += core gui printsupport
 QT       += core gui charts
 QT += core serialport
+QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -21,28 +22,36 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Mainwindow.cpp \
     arduino.cpp \
+    client.cpp \
     conge.cpp \
     connection.cpp \
     dialog.cpp \
     main.cpp \
+    mainwindowclient.cpp \
     menu.cpp \
     personnel.cpp \
+    piechart.cpp \
+    smtp.cpp \
     sp.cpp
 
 HEADERS += \
     Mainwindow.h \
     arduino.h \
+    client.h \
     conge.h \
     connection.h \
     dialog.h \
+    mainwindowclient.h \
     menu.h \
     personnel.h \
+    smtp.h \
     sp.h
 
 FORMS += \
     Mainwindow.ui \
     dialog.ui \
     login.ui \
+    mainwindowclient.ui \
     menu.ui
 
 # Default rules for deployment.

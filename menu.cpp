@@ -19,3 +19,9 @@ void MENU::on_pushButton_clicked()
    d=new Dialog();
    d->show();
 }
+
+void MENU::on_pushButton_2_clicked()
+{
+    c = new mainwindowclient();
+    c->show();
+}
