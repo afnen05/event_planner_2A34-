@@ -9,7 +9,7 @@
 Event::Event()
 {
  NOM="";CIN_CL="" ;DATE_EV=""; ID="";
-PRIX=0;}
+PRIX=0; CIN_PERSO="";}
 
 Event::Event(QString NOM,QString CIN_CL,QString DATE_EV,int PRIX){
      this->NOM=NOM; this->CIN_CL=CIN_CL; this->DATE_EV=DATE_EV;this->PRIX=PRIX;}
@@ -17,6 +17,7 @@ QString Event::getnom(){return NOM;}
 QString Event::getid(){return ID;}
 QString Event::getcin(){return CIN_CL;}
 QString Event::getdate(){return DATE_EV;}
+QString Event::getcin_perso(){return CIN_PERSO;}
 int Event::getprix(){return  PRIX;}
 //setter
 void Event::setcin(QString CIN_CL){this->CIN_CL=CIN_CL;}
@@ -24,16 +25,21 @@ void Event::setid(QString ID){this->ID=ID;}
 void Event::setnom(QString NOM){this->NOM=NOM;}
 void Event::setdate(QString DATE_EV){this->DATE_EV=DATE_EV;}
 void Event::setprix(int PRIX){this->PRIX=PRIX;}
+void Event::setcin_perso(QString CIN_PERSO){this->CIN_PERSO=CIN_PERSO;}
+
+
 
 bool Event::ajouter(){
-bool test =true ;
+ bool test =true ;
     QSqlQuery query;
-          query.prepare("INSERT INTO EVENEMENT (CIN_CL,DATE_EV,NOM,PRIX) "
-                        "VALUES (:CIN_CL, :DATE_EV, :NOM, :PRIX)");
+          query.prepare("INSERT INTO EVENEMENT (CIN_CL,DATE_EV,NOM,PRIX,CIN_PERSO) "
+                        "VALUES (:CIN_CL, :DATE_EV, :NOM, :PRIX,:CIN_PERSO)");
           query.bindValue(":CIN_CL",CIN_CL);
           query.bindValue(":DATE_EV",DATE_EV);
           query.bindValue(":NOM",NOM);
           query.bindValue(":PRIX",PRIX);
+          query.bindValue(":CIN_PERSO",CIN_PERSO);
+
           query.exec();
           qDebug() <<query.lastError();
     return  test;
@@ -48,6 +54,9 @@ QSqlQueryModel* Event::afficher(){
            model->setHeaderData(1, Qt::Horizontal,QObject::tr("CIN_CL"));
            model->setHeaderData(2, Qt::Horizontal,QObject::tr("NOM"));
            model->setHeaderData(3, Qt::Horizontal,QObject::tr("PRIX"));
+           model->setHeaderData(4, Qt::Horizontal,QObject::tr("CIN_PERSO"));
+
+
 
 
 

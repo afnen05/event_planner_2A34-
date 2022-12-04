@@ -15,6 +15,7 @@ public:
     QString getnom();
     QString getcin();
     QString getdate();
+    QString getcin_perso();
     int getprix();
     //setter;
     void setid(QString);
@@ -22,6 +23,7 @@ public:
     void setcin(QString);
     void setdate(QString);
     void setprix(int);
+    void setcin_perso(QString);
     bool ajouter();
     QSqlQueryModel* afficher();
     bool supprimer(QString);
@@ -36,7 +38,7 @@ std::map<QString,int> statNbrPerType();
 
 
 private:
-    QString NOM,CIN_CL,DATE_EV,ID;
+    QString NOM,CIN_CL,DATE_EV,ID,CIN_PERSO;
     int PRIX;
 
 };
