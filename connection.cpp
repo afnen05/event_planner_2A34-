@@ -1,7 +1,6 @@
 #include "connection.h"
-#include "mainwindow.h"
-#include <QApplication>
-#include <QMessageBox>
+
+
 
 Connection::Connection()
 {
@@ -9,12 +8,11 @@ Connection::Connection()
 }
 
 bool Connection::createconnect()
-{
-bool test=false;
+{bool test=false;
 QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
-db.setDatabaseName("my_project");
-db.setUserName("afnene");//inserer nom de l'utilisateur
-db.setPassword("esprit23");//inserer mot de passe de cet utilisateur
+db.setDatabaseName("test_bd");
+db.setUserName("system");//inserer nom de l'utilisateur
+db.setPassword("23422342");//inserer mot de passe de cet utilisateur
 
 if (db.open())
 test=true;
@@ -25,4 +23,3 @@ test=true;
 
     return  test;
 }
-void Connection::closeConnection(){db.close();}
