@@ -31,3 +31,9 @@ void MENU::on_pushButton_3_clicked()
     f = new mainwindow_facture();
     f -> show();
 }
+
+void MENU::on_pushButton_4_clicked()
+{
+    a = new mainwindow_avis();
+    a->show();
+}

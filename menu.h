@@ -3,6 +3,7 @@
 #include "dialog.h"
 #include "mainwindowclient.h"
 #include "mainwindow_facture.h"
+#include "mainwindow_avis.h"
 #include <QDialog>
 
 namespace Ui {
@@ -24,9 +25,12 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_4_clicked();
+
 private:
     Ui::MENU *ui;
     mainwindowclient *c;
+    mainwindow_avis *a;
     Dialog *d;
     mainwindow_facture *f;
 };
