@@ -22,11 +22,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Mainwindow.cpp \
     arduino.cpp \
+    arduino_facture.cpp \
     client.cpp \
     conge.cpp \
     connection.cpp \
     dialog.cpp \
+    facture.cpp \
     main.cpp \
+    mainwindow_facture.cpp \
     mainwindowclient.cpp \
     menu.cpp \
     personnel.cpp \
@@ -37,10 +40,13 @@ SOURCES += \
 HEADERS += \
     Mainwindow.h \
     arduino.h \
+    arduino_facture.h \
     client.h \
     conge.h \
     connection.h \
     dialog.h \
+    facture.h \
+    mainwindow_facture.h \
     mainwindowclient.h \
     menu.h \
     personnel.h \
@@ -51,6 +57,7 @@ FORMS += \
     Mainwindow.ui \
     dialog.ui \
     login.ui \
+    mainwindow_facture.ui \
     mainwindowclient.ui \
     menu.ui
 

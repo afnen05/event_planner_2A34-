@@ -39,6 +39,19 @@
     <string>GESTION CLIENT</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>180</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>GESTION FACTURE</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

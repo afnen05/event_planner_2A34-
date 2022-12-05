@@ -47,7 +47,7 @@ private slots:
     void mailSent(QString);
     void browse();
 
-    void on_tabWidget_2_currentChanged(int index);
+
 
     void on_sendBtn_clicked();
 

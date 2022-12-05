@@ -25,3 +25,9 @@ void MENU::on_pushButton_2_clicked()
     c = new mainwindowclient();
     c->show();
 }
+
+void MENU::on_pushButton_3_clicked()
+{
+    f = new mainwindow_facture();
+    f -> show();
+}

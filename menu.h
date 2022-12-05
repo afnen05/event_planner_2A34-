@@ -2,6 +2,7 @@
 #define MENU_H
 #include "dialog.h"
 #include "mainwindowclient.h"
+#include "mainwindow_facture.h"
 #include <QDialog>
 
 namespace Ui {
@@ -21,10 +22,13 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MENU *ui;
     mainwindowclient *c;
     Dialog *d;
+    mainwindow_facture *f;
 };
 
 #endif // MENU_H
